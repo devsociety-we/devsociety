@@ -1,10 +1,14 @@
 import 'dart:ui';
+import 'package:devsociety/GetItC.dart';
 import 'package:devsociety/Utilities/Colors.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'Services/ThemeServcie.dart';
 import 'Wdigets/MyTextWidget.dart';
 
 void main() {
+  setup();
   runApp(MyApp());
 }
 
@@ -12,7 +16,52 @@ class MyApp extends StatelessWidget {
   MyApp();
   @override
   Widget build(BuildContext context) {
-    return MainClass();
+    return MultiProvider(providers: [
+      StreamProvider<MyTheme>.value(
+          initialData: MyTheme.System,
+          value: getIt<ThemeClass>().themeController.stream),
+    ], child: MainClass());
+  }
+}
+
+final darkTheme = ThemeData(
+    primaryColor: MyColor().createMaterialColor(mainDarkColor),
+    accentColor: mainDarkColor,
+    brightness: Brightness.dark);
+final lightTheme = ThemeData(
+    primarySwatch: MyColor().createMaterialColor(mainLightColor),
+    accentColor: mainLightColor,
+    brightness: Brightness.light);
+
+ThemeData getTheme(MyTheme theme) {
+  switch (theme) {
+    case MyTheme.Light:
+      return lightTheme;
+      break;
+    case MyTheme.Dark:
+      return darkTheme;
+      break;
+    case MyTheme.System:
+      return lightTheme;
+      break;
+    default:
+      return darkTheme;
+  }
+}
+
+ThemeMode getThemeMode(MyTheme theme) {
+  switch (theme) {
+    case MyTheme.Light:
+      return ThemeMode.light;
+      break;
+    case MyTheme.Dark:
+      return ThemeMode.dark;
+      break;
+    case MyTheme.System:
+      return ThemeMode.system;
+      break;
+    default:
+      return ThemeMode.system;
   }
 }
 
@@ -20,17 +69,21 @@ class MainClass extends StatelessWidget {
   MainClass({Key key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      key: key,
-      title: 'Dev Society',
-      darkTheme: ThemeData(
-          primaryColor: MyColor().createMaterialColor(mainDarkColor),
-          brightness: Brightness.dark),
-      theme: ThemeData(
-          primarySwatch: MyColor().createMaterialColor(mainLightColor),
-          brightness: Brightness.light),
-      home: MyHomePage(),
+    MyTheme myTheme = Provider.of<MyTheme>(context);
+    return AnimatedSwitcher(
+      duration: Duration(seconds: 1),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+      child: MaterialApp(
+        key: UniqueKey(),
+        debugShowCheckedModeBanner: false,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        title: 'Dev Society',
+        themeMode: getThemeMode(myTheme),
+        home: MyHomePage(),
+      ),
     );
   }
 }
@@ -110,6 +163,16 @@ class MyHomePage extends StatelessWidget {
                 textScaleFactor: 2.5,
                 textAlign: TextAlign.center,
               ),
+              TextButton(
+                  onPressed: () {
+                    ThemeClass themeClass = getIt<ThemeClass>();
+                    if (Theme.of(context).brightness == Brightness.dark)
+                      themeClass.changeTheme(MyTheme.Light);
+                    else {
+                      themeClass.changeTheme(MyTheme.Dark);
+                    }
+                  },
+                  child: MyText("Change"))
             ],
           ),
         ),
