@@ -17,7 +17,7 @@ class MyText extends Text {
     this.fontWeight = FontWeight.normal,
   }) : super(text,
             style:
-                TextStyle(color: color, fontSize: size, fontWeight: fontWeight),
+                TextStyle(fontSize: size, fontWeight: fontWeight, color: color),
             textScaleFactor: scale);
 }
 

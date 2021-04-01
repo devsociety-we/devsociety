@@ -11,4 +11,4 @@ class ThemeClass {
   }
 }
 
-enum MyTheme { Light, Dark, System }
+enum MyTheme { Light, Dark }
