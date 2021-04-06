@@ -2,13 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-Color mainDarkColor = Color(0xff4e839e);
+Color mainDarkColor = Color(0xff3f83d4);
 
-Color mainLightColor = Color(0xffe0eef3);
-
+Color mainLightColor = Color(0xff009CDC);
 
 class MyColor {
-   MaterialColor createMaterialColor(Color color) {
+  MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];
     Map swatch = <int, Color>{};
     final int r = color.red, g = color.green, b = color.blue;
