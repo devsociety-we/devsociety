@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:devsociety/GetItC.dart';
 import 'package:devsociety/Utilities/Colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -78,7 +80,7 @@ class MainClass extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      title: 'Dev Society',
+      title: "Dev Society | Welcome to the City of Developers",
       themeMode: getThemeMode(myTheme),
       home: MyHomePage(),
     );
@@ -123,9 +125,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget cardWidget(double width) {
+  Widget cardWidget(Size size) {
     return Container(
-      height: width * 0.25,
+      height: size.width > size.height ? size.width * 0.25 : size.width * 0.5,
       child: AspectRatio(
         aspectRatio: 7 / 4,
         child: AnimatedSwitcher(
@@ -161,6 +163,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 hovering = false;
               });
             },
+            onHover: (event) {
+              if (!kIsWeb) if (Platform.isIOS || Platform.isAndroid)
+                setState(() => hovering = !hovering);
+            },
             child: AnimatedSwitcher(
               duration: Duration(milliseconds: 500),
               child: InkWell(
@@ -173,13 +179,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   key: UniqueKey(),
                   children: [
                     Container(
-                      decoration: BoxDecoration(boxShadow: [
-                        BoxShadow(
-                            spreadRadius: 1,
-                            blurRadius: 3,
-                            color: Colors.grey.withOpacity(0.7),
-                            offset: Offset(2, 2))
-                      ]),
                       child: showFront
                           ? _buildCardFront()
                           : _buildCardBackground(),
@@ -204,16 +203,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Colors.black.withOpacity(0.35),
                                   ])),
                               key: UniqueKey(),
-                              child: BackdropFilter(
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.white,
-                                  size: 50,
-                                ),
-                                filter: ImageFilter.blur(
-                                  sigmaX: 1.5,
-                                  sigmaY: 1.5,
-                                ),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.white,
+                                size: 50,
                               ),
                             )
                           : Container(),
@@ -233,6 +226,10 @@ class _MyHomePageState extends State<MyHomePage> {
       width: 800,
       child: MouseRegion(
         onEnter: (event) => setState(() => showHiddenText = true),
+        onHover: (event) {
+          if (!kIsWeb) if (Platform.isIOS || Platform.isAndroid)
+            setState(() => showHiddenText = !showHiddenText);
+        },
         onExit: (event) => setState(() => showHiddenText = false),
         child: AnimatedSwitcher(
             duration: Duration(milliseconds: 500),
@@ -280,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               fontWeight: FontWeight.w100,
                             ),
                             MyTextSpan(
-                                text: "Initiate the Construction\n",
+                                text: "Initiate the Development\n",
                                 fontWeight: FontWeight.bold),
                             MyTextSpan(
                               text: "of one of the ",
@@ -383,14 +380,16 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor:
                   MaterialStateProperty.resolveWith<Color>((states) {
                 if (states.contains(MaterialState.hovered) ||
-                    states.contains(MaterialState.pressed)) {
+                    states.contains(MaterialState.pressed) ||
+                    states.contains(MaterialState.focused)) {
                   return Color(0xff29b6f6);
                 }
                 return Colors.transparent;
               }),
               foregroundColor: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.hovered) ||
-                    states.contains(MaterialState.pressed)) {
+                    states.contains(MaterialState.pressed) ||
+                    states.contains(MaterialState.focused)) {
                   return Colors.white;
                 }
                 return Color(0xff29b6f6);
@@ -399,7 +398,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
                 if (states.contains(MaterialState.pressed)) {
                   return StadiumBorder();
-                } else if (states.contains(MaterialState.hovered)) {
+                } else if (states.contains(MaterialState.hovered) ||
+                    states.contains(MaterialState.focused)) {
                   return RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20));
                 }
@@ -414,7 +414,6 @@ class _MyHomePageState extends State<MyHomePage> {
           label: Text(
             "Join Us Here",
             textScaleFactor: 2.2,
-            //     color: mainDarkColor,
           ),
         ),
         Container(
@@ -483,7 +482,6 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           icon: SvgPicture.asset(
             githubSVG,
-            color: Colors.white,
           ),
           label: Text(
             "Contribute Here",
@@ -524,19 +522,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget screenLayout(Size size) {
-    return Wrap(
-      direction: Axis.horizontal,
-      alignment: WrapAlignment.center,
-      runSpacing: 50,
-      spacing: 50,
-      runAlignment: WrapAlignment.center,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        cardWidget(size.width),
-        textWidgets(),
-        telegramWidget(size.width),
-        githubWidget(size.width)
-      ],
+    return Container(
+      padding: EdgeInsets.all(30),
+      child: Wrap(
+        direction: Axis.horizontal,
+        alignment: WrapAlignment.center,
+        runSpacing: 50,
+        spacing: 50,
+        runAlignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          cardWidget(size),
+          textWidgets(),
+          telegramWidget(size.width),
+          githubWidget(size.width)
+        ],
+      ),
     );
   }
 
@@ -550,41 +551,42 @@ class _MyHomePageState extends State<MyHomePage> {
       a++;
     }
     return Scaffold(
-      body: SafeArea(
-        child: NestedScrollView(
-            physics: BouncingScrollPhysics(),
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  collapsedHeight: kToolbarHeight + 20,
-                  expandedHeight: 100,
+      body: NestedScrollView(
+          physics: BouncingScrollPhysics(),
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                collapsedHeight: 100,
+                expandedHeight: 140,
+                title: Text("Dev Society"),
+                flexibleSpace: FlexibleSpaceBar(
                   title: Text(
-                      "Dev Society | A Group of Geeks Joined together for all tech innovations",
-                      textScaleFactor: 2),
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        if (theme != MyTheme.Dark) {
-                          themeClass.changeTheme(MyTheme.Dark);
-                        } else {
-                          themeClass.changeTheme(MyTheme.Light);
-                        }
-                      },
-                      icon: AnimatedSwitcher(
-                          duration: Duration(milliseconds: 100),
-                          child: Icon(
-                            theme != MyTheme.Dark
-                                ? Icons.nights_stay
-                                : Icons.wb_sunny,
-                            key: ValueKey(theme),
-                          )),
-                    ),
-                  ],
+                    "A Group of Geeks Joined together for all tech innovation",
+                  ),
                 ),
-              ];
-            },
-            body: screenLayout(MediaQuery.of(context).size)),
-      ),
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      if (theme != MyTheme.Dark) {
+                        themeClass.changeTheme(MyTheme.Dark);
+                      } else {
+                        themeClass.changeTheme(MyTheme.Light);
+                      }
+                    },
+                    icon: AnimatedSwitcher(
+                        duration: Duration(milliseconds: 100),
+                        child: Icon(
+                          theme != MyTheme.Dark
+                              ? Icons.nights_stay
+                              : Icons.wb_sunny,
+                          key: ValueKey(theme),
+                        )),
+                  ),
+                ],
+              ),
+            ];
+          },
+          body: screenLayout(MediaQuery.of(context).size)),
     );
   }
 }
