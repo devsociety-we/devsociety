@@ -558,8 +558,12 @@ class _MyHomePageState extends State<MyHomePage> {
               SliverAppBar(
                 collapsedHeight: 100,
                 expandedHeight: 140,
-                title: Text("Dev Society"),
+                title: Text(
+                  "Dev Society",
+                  textScaleFactor: 1.5,
+                ),
                 flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
                   title: Text(
                     "A Group of Geeks Joined together for all tech innovation",
                   ),
