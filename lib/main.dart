@@ -3,7 +3,9 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:devsociety/GetItC.dart';
+import 'package:devsociety/Wdigets/Card.dart';
 import 'package:devsociety/Utilities/Colors.dart';
+import 'package:devsociety/Wdigets/SocialButtons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -95,130 +97,55 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final ThemeClass themeClass = getIt<ThemeClass>();
   MyTheme theme = MyTheme.Light;
-  bool showFront = true;
-  bool hovering = false;
+
   bool showHiddenText = false;
-  Size originalSize;
-  Key key = UniqueKey();
-  final String telegramSVG = 'assets/telegram.svg';
-  final String telegramLink = "https://t.me/joinchat/_6F7xO3nItY4MjFl";
-  final String githubLink = 'https://www.github.com/devsociety-we';
-  final String githubSVG = 'assets/github.svg';
 
-  Widget _buildCardFront() {
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.contain, image: AssetImage('assets/CardFront.png'))),
-    );
+  double getTitleScale(double width) {
+    double scale = 1;
+    if (width < 400) {
+      scale = 2;
+    } else if (width < 500) {
+      scale = 2.3;
+    } else if (width < 600) {
+      scale = 2.6;
+    } else if (width < 700) {
+      scale = 3.0;
+    } else if (width < 800) {
+      scale = 3.3;
+    } else if (width < 900) {
+      scale = 3.6;
+    } else if (width < 1000) {
+      scale = 3.9;
+    } else if (width < 1100) {
+      scale = 4.2;
+    } else if (width < 1200) {
+      scale = 4.5;
+    } else if (width < 1300) {
+      scale = 4.8;
+    } else {
+      scale = 5;
+    }
+    return scale;
   }
 
-  void initState() {
-    super.initState();
-  }
-
-  Widget _buildCardBackground() {
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.contain, image: AssetImage('assets/CardBack.png'))),
-    );
-  }
-
-  Widget cardWidget(Size size) {
-    return Container(
-      height: size.width > size.height ? size.width * 0.25 : size.width * 0.5,
-      child: AspectRatio(
-        aspectRatio: 7 / 4,
-        child: AnimatedSwitcher(
-          switchOutCurve: Curves.easeOut,
-          switchInCurve: Curves.easeIn,
-          duration: Duration(milliseconds: 500),
-          transitionBuilder: (child, animation) {
-            final rotateAnim = Tween(begin: pi, end: 0.0).animate(animation);
-            return AnimatedBuilder(
-              animation: rotateAnim,
-              child: child,
-              builder: (context, child) {
-                final isUnder = (ValueKey(showFront) != widget.key);
-                final value =
-                    isUnder ? min(rotateAnim.value, pi / 2) : rotateAnim.value;
-                return Transform(
-                  transform: Matrix4.rotationY(value),
-                  child: child,
-                  alignment: Alignment.center,
-                );
-              },
-            );
-          },
-          child: MouseRegion(
-            key: key,
-            onEnter: (event) {
-              setState(() {
-                hovering = true;
-              });
-            },
-            onExit: (event) {
-              setState(() {
-                hovering = false;
-              });
-            },
-            onHover: (event) {
-              if (!kIsWeb) if (Platform.isIOS || Platform.isAndroid)
-                setState(() => hovering = !hovering);
-            },
-            child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 500),
-              child: InkWell(
-                key: UniqueKey(),
-                onTap: () => setState(() {
-                  key = UniqueKey();
-                  showFront = !showFront;
-                }),
-                child: Stack(
-                  key: UniqueKey(),
-                  children: [
-                    Container(
-                      child: showFront
-                          ? _buildCardFront()
-                          : _buildCardBackground(),
-                    ),
-                    AnimatedSwitcher(
-                      duration: Duration(milliseconds: 100),
-                      child: hovering
-                          ? Container(
-                              alignment: Alignment.centerRight,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      stops: [
-                                    0,
-                                    0.8,
-                                    1
-                                  ],
-                                      colors: [
-                                    Colors.black.withOpacity(0.1),
-                                    Colors.black.withOpacity(0.2),
-                                    Colors.black.withOpacity(0.35),
-                                  ])),
-                              key: UniqueKey(),
-                              child: Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                                size: 50,
-                              ),
-                            )
-                          : Container(),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  double _getSubTitleScale(double width) {
+    double scale = 1;
+    if (width < 400) {
+      scale = 1.3;
+    } else if (width < 500) {
+      scale = 1.5;
+    } else if (width < 600) {
+      scale = 1.7;
+    } else if (width < 700) {
+      scale = 1.9;
+    } else if (width < 800) {
+      scale = 2.1;
+    } else if (width < 900) {
+      scale = 2.3;
+    } else {
+      scale = 2.5;
+    }
+    return scale;
   }
 
   Widget textWidgets() {
@@ -363,212 +290,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget telegramWidget(double width) {
-    return Column(
-      children: [
-        TextButton.icon(
-          style: ButtonStyle(
-              animationDuration: Duration(milliseconds: 300),
-              elevation: MaterialStateProperty.resolveWith<double>((states) {
-                if (states.contains(MaterialState.pressed)) {
-                  return 8;
-                } else if (states.contains(MaterialState.hovered)) {
-                  return 4;
-                }
-                return 0;
-              }),
-              backgroundColor:
-                  MaterialStateProperty.resolveWith<Color>((states) {
-                if (states.contains(MaterialState.hovered) ||
-                    states.contains(MaterialState.pressed) ||
-                    states.contains(MaterialState.focused)) {
-                  return Color(0xff29b6f6);
-                }
-                return Colors.transparent;
-              }),
-              foregroundColor: MaterialStateProperty.resolveWith((states) {
-                if (states.contains(MaterialState.hovered) ||
-                    states.contains(MaterialState.pressed) ||
-                    states.contains(MaterialState.focused)) {
-                  return Colors.white;
-                }
-                return Color(0xff29b6f6);
-              }),
-              shape:
-                  MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
-                if (states.contains(MaterialState.pressed)) {
-                  return StadiumBorder();
-                } else if (states.contains(MaterialState.hovered) ||
-                    states.contains(MaterialState.focused)) {
-                  return RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20));
-                }
-                return RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10));
-              }),
-              padding: MaterialStateProperty.all(EdgeInsets.all(20))),
-          onPressed: () async {
-            await launch('https://t.me/joinchat/_6F7xO3nItY4MjFl');
-          },
-          icon: SvgPicture.asset(telegramSVG),
-          label: Text(
-            "Join Us Here",
-            textScaleFactor: 2.2,
-          ),
-        ),
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 100, height: 1, color: mainDarkColor),
-              SizedBox(
-                width: 15,
-              ),
-              MyText(
-                'OR',
-                scale: 1.5,
-                color: mainDarkColor,
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              Container(width: 100, height: 1, color: mainDarkColor),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        QrImage(
-          data: telegramLink,
-          size: width * 0.12 < 250 ? 250 : width * 0.12,
-          backgroundColor: Colors.white,
-        ),
-      ],
-    );
-  }
-
-  Widget githubWidget(double width) {
-    return Column(
-      children: [
-        TextButton.icon(
-          style: ButtonStyle(
-              animationDuration: Duration(milliseconds: 300),
-              elevation: MaterialStateProperty.resolveWith<double>((states) {
-                if (states.contains(MaterialState.pressed)) {
-                  return 8;
-                } else if (states.contains(MaterialState.hovered)) {
-                  return 4;
-                }
-                return 0;
-              }),
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
-              foregroundColor: MaterialStateProperty.all(Colors.white),
-              shape:
-                  MaterialStateProperty.resolveWith<OutlinedBorder>((states) {
-                if (states.contains(MaterialState.pressed)) {
-                  return StadiumBorder();
-                } else if (states.contains(MaterialState.hovered)) {
-                  return RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20));
-                }
-                return RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10));
-              }),
-              padding: MaterialStateProperty.all(EdgeInsets.all(20))),
-          onPressed: () async {
-            await launch(githubLink);
-          },
-          icon: SvgPicture.asset(
-            githubSVG,
-          ),
-          label: Text(
-            "Contribute Here",
-            textScaleFactor: 2.2,
-          ),
-        ),
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 100, height: 1, color: mainDarkColor),
-              SizedBox(
-                width: 15,
-              ),
-              MyText(
-                'OR',
-                scale: 1.5,
-                color: mainDarkColor,
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              Container(width: 100, height: 1, color: mainDarkColor),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        QrImage(
-          data: githubLink,
-          size: width * 0.12 < 250 ? 250 : width * 0.12,
-          backgroundColor: Colors.white,
-        ),
-      ],
-    );
-  }
-
-  Widget screenLayout(Size size) {
-    return Container(
-      padding: EdgeInsets.all(30),
-      child: Wrap(
-        direction: Axis.horizontal,
-        alignment: WrapAlignment.center,
-        runSpacing: 50,
-        spacing: 50,
-        runAlignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          cardWidget(size),
-          textWidgets(),
-          telegramWidget(size.width),
-          githubWidget(size.width)
-        ],
-      ),
-    );
-  }
-
-  int a = 0;
-
   @override
   Widget build(BuildContext context) {
     theme = Provider.of<MyTheme>(context);
-    if (a == 0 || originalSize == null) {
-      originalSize = MediaQuery.of(context).size;
-      a++;
-    }
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: NestedScrollView(
-          physics: BouncingScrollPhysics(),
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                collapsedHeight: 100,
-                expandedHeight: 140,
-                title: Text(
-                  "Dev Society",
-                  textScaleFactor: 1.5,
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Text(
-                    "A Group of Geeks Joined together for all tech innovation",
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  MyText(
+                    "Dev Society",
+                    scale: getTitleScale(size.width),
+                    fontWeight: FontWeight.w300,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
                   ),
-                ),
-                actions: [
+                  Spacer(),
                   IconButton(
                     onPressed: () {
                       if (theme != MyTheme.Dark) {
@@ -588,9 +332,56 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-            ];
-          },
-          body: screenLayout(MediaQuery.of(context).size)),
+              MyText(
+                "A Group of Geeks Joined together for all tech innovation",
+                scale: _getSubTitleScale(size.width),
+                textAlign: TextAlign.center,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 30.0),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  direction: Axis.horizontal,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  runSpacing: 10,
+                  spacing: 10,
+                  children: [
+                    CardWidget(),
+                    textWidgets(),
+                    if (size.width > 650)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TelegramButton(),
+                          SizedBox(
+                            width: 50,
+                          ),
+                          GithubButton(),
+                        ],
+                      )
+                    else
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TelegramButton(),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          GithubButton(),
+                        ],
+                      )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
