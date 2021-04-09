@@ -32,13 +32,13 @@ class GithubButton extends StatelessWidget {
             return RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10));
           }),
-          padding: MaterialStateProperty.all(EdgeInsets.all(10))),
+          padding: MaterialStateProperty.all(EdgeInsets.all(15))),
       onPressed: () async {
         await launch(githubLink);
       },
       icon: SvgPicture.asset(
         githubSVG,
-        color: Colors.white,
+        //color: Colors.black,
       ),
       label: Text(
         "Contribute Here",
@@ -92,7 +92,7 @@ class TelegramButton extends StatelessWidget {
             return RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10));
           }),
-          padding: MaterialStateProperty.all(EdgeInsets.all(10))),
+          padding: MaterialStateProperty.all(EdgeInsets.all(20))),
       onPressed: () async {
         await launch(telegramLink);
       },

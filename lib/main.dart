@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui';
-
 import 'package:devsociety/GetItC.dart';
 import 'package:devsociety/Wdigets/Card.dart';
 import 'package:devsociety/Utilities/Colors.dart';
@@ -9,11 +7,7 @@ import 'package:devsociety/Wdigets/SocialButtons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'Services/ThemeServcie.dart';
 import 'Wdigets/MyTextWidget.dart';
 
@@ -49,11 +43,8 @@ ThemeData getTheme(MyTheme theme) {
   switch (theme) {
     case MyTheme.Light:
       return lightTheme;
-      break;
     case MyTheme.Dark:
       return darkTheme;
-      break;
-
     default:
       return darkTheme;
   }
@@ -163,8 +154,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: showHiddenText
                 ? Container(
                     key: ValueKey(showHiddenText),
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.all(6),
                     child: Column(
                       children: [
                         MyText(
@@ -221,8 +210,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   )
                 : Container(
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(4),
                     key: ValueKey(showHiddenText),
                     child: Column(
                       children: [
