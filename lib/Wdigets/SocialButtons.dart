@@ -51,7 +51,7 @@ class GithubButton extends StatelessWidget {
 class TelegramButton extends StatelessWidget {
   const TelegramButton({Key key}) : super(key: key);
   final String telegramSVG = 'assets/telegram.svg';
-  final String telegramLink = "https://t.me/joinchat/_6F7xO3nItY4MjFl";
+  final String telegramLink = "https://t.me/devsociety";
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
