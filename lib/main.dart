@@ -1,10 +1,13 @@
 import 'dart:ui';
+
 import 'package:devsociety/GetItC.dart';
 import 'package:devsociety/Utilities/Colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+import 'Screens/About.dart';
 import 'Screens/Home.dart';
 import 'Services/ThemeServcie.dart';
 
@@ -23,7 +26,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 final darkTheme = ThemeData(
     primaryColor: MyColor().createMaterialColor(mainDarkColor),
@@ -68,8 +70,12 @@ class DevSociety extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
+      initialRoute: '/',
       title: "Dev Society | Welcome to the City of Developers",
       themeMode: getThemeMode(myTheme),
+      routes: {
+        '/About': (context) => AboutPage()
+      },
       home: HomePage(),
     );
   }
